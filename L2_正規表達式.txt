@@ -1,0 +1,137 @@
+﻿# 正規表達式（Regular Expression）
+
+a_sentence <- "Joey: This guy says hello, I wanna kill myself."          # "" , . 都可以做為斷句
+strsplit(a_sentence, split = ":")
+
+# 文字斷詞
+strsplit(a_sentence, split = "[: ,.]+")
+
+# 對數字做正規表達式
+a_sentence <- "Monica has 11 or 13, maybe 15 categories of towels."      # "" , . 都可以做為斷句
+gregexpr(pattern = "[0-9]+", a_sentence)                                 # "[0-9]+" 數字做正規表達式
+
+# 找尋數字
+# 判斷是否有數字
+word_vector <- unlist(strsplit(a_sentence, split = "[ ,?]+"))
+word_vector
+grep(pattern = "[0-9]+", word_vector)
+grepl(pattern = "[0-9]+", word_vector)
+
+# 取代第一個數字為 X
+# 取代所有數字為 X
+a_sentence <- "Monica has 11 or 13, maybe 15 categories of towels?"
+sub(pattern = "[0-9]+", a_sentence, replacement = "X")
+gsub(pattern = "[0-9]+", a_sentence, replacement = "X")
+
+# 判斷有無浮點數
+a_sentence <- c("半程馬拉松是 21 公里", "全程馬拉松是 42.195 公里")
+grepl(pattern = "[0-9]+\\.[0-9]+", a_sentence)
+
+# 判斷有無英文
+grepl(pattern = "[A-Za-z]+", a_sentence)
+
+# 判斷有無電子郵件信箱
+word_vector <- c("Chandler Bing", "cb@friends.com")
+grepl(pattern = "[a-zA-Z0-9_]+@[a-zA-Z0-9\\._]+", word_vector)
+
+# 判斷有無網址
+word_vector2 <- c("https://chandler.com", "cb@friends.com")
+grepl(pattern = "http(s)?://[a-zA-Z0-9\\./_]+", word_vector2)
+
+# 練習1
+# 判斷這個向量有幾個浮點數
+distances <- c("0.4", "1", "3", "5", "10", "21", "42.195")
+float_judge <- grepl(pattern = "[0-9]+\\.[0-9]+ ", distances)
+sum(float_judge)
+
+# 練習2
+# 判斷這個向量有幾個元素包含英文
+sentences <- c("我喜歡 6 人行", "I love Friends", "我最喜歡 Central Perk", "我喜歡那個咖啡館")
+en_judge <- grepl(pattern = "[A-Za-z]+", sentences)
+sum(en_judge)
+
+# 練習3
+# 判斷這個向量有幾個元素包含電子郵件信箱
+sentences <- c("我喜歡 6 人行", "I love Friends", "我最喜歡 Central Perk", "我喜歡那個咖啡館", "cbing@friends.com", "pbuffay@friends.com", "www.friends.com")
+email_judge <- grepl(pattern = "[a-zA-Z0-9_\\.]+@[a-zA-Z0-9\\._]+", sentences)
+sum(email_judge)
+
+
+# 正規表達式的特殊字元
+words <- c("", " ", "a", "24", "@")
+grepl(pattern = ".", words)              # "." 是任一字元的符號
+
+# \ 可以用來跳脫特殊字元
+words <- c("Chandler Bing", "Chandler.Bing")
+# 如果我真的要比對 . 這個符號呢？
+grepl(pattern = ".", words)
+grepl(pattern = "\\.", words)
+
+# ^ 可以用來比對開頭文字
+words <- c("Bing", "Geller", "Green", "Buffay", "Tribbiani")
+grepl(pattern = "^G", words)
+
+# $ 可以用來比對結束文字
+sentence <- c("Monica", "darling", "it's", "Amanda", "calling")
+grepl(pattern = "ing$", sentence)
+
+# * 可以用來比對出現零次或多次的文字
+words <- c("friends", "frriends", "fantasy", "Friends")
+grepl(pattern = "fr*", words)             # 大寫、小寫視為不同, 僅對*左邊第一位數"r"有作用, 則顯示零次為TRUE
+
+# + 可以用來比對出現一次或多次的文字
+words <- c("friends", "frriends", "fantasy", "Friends")
+grepl(pattern = "fr+", words)             # 零次為FALSE, 一次為TRUE
+
+# ? 可以用來比對出現零次或一次的文字
+words <- c("friends", "fantasy")
+grepl(pattern = "fr?", words)             # 零次為TRUE, 一次為TRUE
+
+# {} 可以用來比對文字出現的次數
+# x{3} 剛好三個 x
+# x{1,3} 一到三個 x
+# x{1,} 至少一個 x
+# x{,3} 最多三個 x
+words <- c("y", "x", "xx", "xxx")
+grepl(pattern = "x{3}", words)
+grepl(pattern = "x{1,3}", words)
+grepl(pattern = "x{1,}", words)
+grepl(pattern = "x{,3}", words)     # 0~3個X都是TRUE
+
+# [^] 可以用來比對是否"不包含"某些文字
+words <- c("10", "Friends", "六人行")
+grepl(pattern = "[^0-9]", words) # 非數字
+grepl(pattern = "[^0-9A-Za-z]", words) # 非數字與非英文
+
+# | 可以用來比對"或"
+words <- c("food", "foot", "hood")
+grepl(pattern = "foo(d|t)", words)
+
+# \n 比對換行符號
+sentence <- c("Monica darling, it's Amanda calling",
+              "Monica darling,
+               it's Amanda calling")
+grepl(pattern = "\\n", sentence)
+
+# \s 比對空白
+sentence <- c("IloveFriends", "I love Friends")
+grepl(pattern = "\\s", sentence)
+
+# \t 比對 Tab
+sentence <- c("I love Friends", "I\tlove\tFriends")
+writeLines(sentence)
+grepl(pattern = "\\t", sentence)
+
+
+# 練習4
+# 將數字的部分遮蔽成 x
+price_list <- c("apple: 1.76, orange: 2.56, banana: 0.69")
+# apple: x.xx, orange: x.xx, banana: x.xx
+gsub(pattern = "[0-9]", price_list, replacement = "x")
+
+# 練習5
+# 選出 foot、boot 以及 hoot
+words <- c("foot", "zoot", "hoot", "boot", "food")
+subset_logic <- grepl(pattern = "(f|b|h)oot", words)
+words[subset_logic]
+
