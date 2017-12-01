@@ -1,2 +1,2 @@
-# R_crawler
-This is my R crawler in NTU CSIE.
+# R_Crawler
+This is my R-crawler code in NTU CSIE.
